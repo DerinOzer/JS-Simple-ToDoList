@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+    <meta charset="utf-8" />
+    <title>TD1</title> <!-- Le nom de l'onglet -->
+    <link href="style.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    </head>
+
+    <body>	
+        <div class="navigation"> <h4 class="title-nav">LISTE DES TACHES</h4> </div>
+        <div class="flex-container">
+            <div class="flex-items">
+                <ul id="todo-list" ondragstart="start(event)">
+                    <div id="myHTMLWrapper" ></div>
+                </ul>
+            </div>
+            <div class="flex-items">
+                <form id="todo-form">
+                    <h5>AJOUTEZ UNE NOUVELLE TACHE</h5>
+                    <input style="margin-bottom: 0px;" name="todo-form-add" id="todo-form-add" type="text" placeholder="Nouvelle tâche">
+                    <input type='button' class="btn btn-primary" onclick='addTache()' value='Ajouter'/> 
+                    <input type='button' class="btn btn-secondary" onclick='saveTache()' value='Sauvegarder'/>
+                    <input type='button' class="btn btn-dark" onclick='recharge()' value='Recharger'/>
+                </form> 
+    
+                <h5 style="margin-top:20px;">METTEZ A LA CORBEILLE LA TACHE QUE VOUS VOULEZ SUPPRIMEZ</h5>
+                <div class="trash" ondragover="return over(event)" ondrop="return drop(event)">
+                    <img src="trash-can.png">
+                </div>
+            </div>
+        </div>
+    		
+    
+    
+        <script type="text/javascript">
+            window.onload = loop;
+            var listeTaches=['Tache #1', 'Tache #2'];
+            function loop()
+            {
+                var wrapper = document.getElementById("myHTMLWrapper");
+                var myHTML = '';
+                for (var i = 0; i < listeTaches.length; i++) {
+                    myHTML += '<li> <span draggable="true" id="'+ i +'">' + listeTaches[i] + '</span></li> <a style="text-align: center; display:inline-block;" href="#" class="btn btn-danger"  onclick="removeTask('+ i +')">Remove</a><br>';
+                }
+                wrapper.innerHTML = myHTML
+            }
+
+            function addTache()
+            {
+                listeTaches.push(document.getElementById('todo-form-add').value);
+                loop();
+            
+            }
+
+            function removeTask(index)
+            {
+                console.log(index);
+                listeTaches.splice(index,1);
+                loop();
+            }
+
+            function saveTache(){
+                //On efface les données du localStorage
+    	        localStorage.clear();
+                //On se positionne sur le noeud todo-list
+                for (var i = 0; i < listeTaches.length; i++) {
+                    localStorage.setItem(i,listeTaches[i]);
+                }
+            }
+
+            function recharge(){
+                listeTaches.splice(0,listeTaches.length);
+                for (var i = 0; i < localStorage.length; i++) {
+                    listeTaches[i]=localStorage.getItem(i);
+                }
+                loop();
+            }
+
+            function start(event){
+                event.dataTransfer.effectAllowed = "move";
+                event.dataTransfer.setData("text", event.target.getAttribute("id"));
+            }
+
+            function over(event){
+                return false;
+            }
+
+            function drop(event){
+                obj = event.dataTransfer.getData("text");
+                removeTask(obj);
+                return false;
+            }
+        </script>
+    </body>
+    
+
+</html>
+
